@@ -4,6 +4,7 @@
  License: MIT
  */
 var jsTree = angular.module('jsTreeAngular',[]);
+
 jsTree.factory('jsTreeService', [
         '$log', '$rootScope',
         function($log, $rootScope) {
@@ -110,8 +111,8 @@ jsTree.factory('jsTreeService', [
 ]);
 
 jsTree.directive('jsTree', [
-    '$parse', '$log', '$timeout', 'jsTreeService',
-    function ($parse, $log, $timeout, jsTreeService) {
+    '$log', '$timeout', 'jsTreeService',
+    function ($log, $timeout, jsTreeService) {
         'use strict';
 
         return {

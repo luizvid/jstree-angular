@@ -32,10 +32,11 @@ At the time, it's offers just a minimal to use.
 ## Quick start
 
 ### Include all neccessary files
-To get started you need 3 things in your page:
+To get started you need 4 things in your page:
  1. jQuery (anything above 1.9.1 will work)
  2. A jstree theme (there is only one theme supplied by default)
  3. The jstree source file
+ 4. The jstree-angular.js source file
 
 ```html
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
