@@ -35,16 +35,22 @@ At the time, it's offers just a minimal to use.
 To get started you need 4 things in your page:
  1. jQuery (anything above 1.9.1 will work)
  2. A jstree theme (there is only one theme supplied by default)
- 3. The jstree source file
- 4. The jstree-angular.js source file
+ 3. The jstree source file or just use jstree-angular.pack.min.js
+ 4. The jstree-angular.js source file or just use jstree-angular.pack.min.js
 
 ```html
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.9/themes/default/style.min.css" />
-<script src="//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.9/jstree.min.js"></script>
 
-<script src="/js/vendor/jstree-angular.js"></script>
+<!-- jQuery must be loaded first -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<!-- if jQuery CDN not loaded -->
+<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.8.0.min.js"><\/script>')</script>
+<!-- Than load Angularjs -->
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular.min.js"></script>
+<!-- if Angularjs CDN not loaded -->
+<script>(typeof angular != 'undefined') || document.write('<script src="js/vendor/angular.min.js")<\/script>')</script>
+
+<script src="/js/vendor/jstree-angular.pack.min.js"></script>
 ```
 
 ### Sample

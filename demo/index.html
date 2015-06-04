@@ -7,7 +7,6 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-
         <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.9/themes/default/style.min.css" />
 
     </head>
@@ -25,13 +24,18 @@
         </div>
 
 
-        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular.min.js"></script>
-        <script>(typeof angular != 'undefined') || document.write('<script src="js/vendor/angular.min.js")<\/script>')</script>
+        <!-- jQuery must be loaded first -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <!-- if jQuery CDN not loaded -->
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.8.0.min.js"><\/script>')</script>
+        <!-- Than load Angularjs -->
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular.min.js"></script>
+        <!-- if Angularjs CDN not loaded -->
+        <script>(typeof angular != 'undefined') || document.write('<script src="js/vendor/angular.min.js")<\/script>')</script>
+        <!-- Than load jQuery jsTree | included if using js-angular.pack.min.js -->
         <script src="//cdnjs.cloudflare.com/ajax/libs/jstree/3.1.1/jstree.min.js"></script>
 
-        <script src="js/jstree-angular.js"></script>
+        <script src="js/jstree-angular.pack.min.js"></script>
         <script src="js/app.js"></script>
 
     </body>
