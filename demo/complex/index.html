@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="" ng-app="SimpleDemo" ng-cloak class="ng-cloak">
+<html class="no-js" lang="" ng-app="ComplexDemo" ng-cloak class="ng-cloak">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -18,9 +18,15 @@
         <div ng-controller="MainController">
             <h1>jsTree-Angular demo</h1>
             <pre>{{jsonData}}</pre>
+
+            <button type="button" ng-click="refresh()">Refresh tree</button>
             <hr />
             <input type="text" ng-model="search" value="" placeholder="Search..." />
-            <js-tree tree-model="jsonData" tree-search="search" tree-plugins="search, wholerow" tree-options="myOptions"></js-tree>
+            <js-tree tree-model="jsonData" tree-search="search" tree-plugins="dnd, search, wholerow" tree-options="myOptions"></js-tree>
+
+            <hr />
+            <button type="button" ng-click="show_moved()">Show moved nodes</button>
+            <pre>{{movedNodes | json}}</pre>
         </div>
 
         <!-- jQuery must be loaded first -->

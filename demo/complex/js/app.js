@@ -1,8 +1,8 @@
 // Starts application and calls the jsTreeAngular module
-var app = angular.module('SimpleDemo', [ 'jsTreeAngular' ]);
+var app = angular.module('ComplexDemo', [ 'jsTreeAngular' ]);
 
 // Sample controller for define data and some configuration
-app.controller('MainController', ['$scope', function ($scope) {
+app.controller('MainController', ['$scope', 'jsTreeFactory', function ($scope, jsTreeFactory) {
     'use strict';
 
     var init = function () {
@@ -16,6 +16,18 @@ app.controller('MainController', ['$scope', function ($scope) {
             {"id" : 5, "parent" : 2, "text" : "Child node 3"},
             {"id" : 6, "parent" : 3, "text" : "Child node 4"}
         ];
+
+        // Shows all moved nodes
+        $scope.show_moved = function() {
+            $scope.movedNodes = jsTreeFactory.getMovedNodes();
+        };
+
+        // Refresh tree and clean variables
+        $scope.refresh = function() {
+            $scope.movedNodes = undefined;
+            jsTreeFactory.refreshTree();
+        };
+
 
         // Some options to pass too.
         $scope.myOptions = {
@@ -31,8 +43,6 @@ app.controller('MainController', ['$scope', function ($scope) {
 
     };
 
-
     init();
-
 
 }]);

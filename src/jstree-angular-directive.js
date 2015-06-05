@@ -6,14 +6,14 @@
  */
 (function(app) {
     app.directive('jsTree', [
-        '$timeout', 'jsTreeService',
-        function ($timeout, jsTreeService) {
+        '$timeout', 'jsTreeFactory',
+        function ($timeout, jsTreeFactory) {
             'use strict';
 
             var key, plugins = [], options = [], properties = {};
 
             function link(scope, element) {
-                plugins = scope.plugins ? scope.plugins.split(',') : [];
+                plugins = scope.plugins ? _mapTrim(scope.plugins.split(',')) : [];
                 options = scope.options ? scope.options : [];
 
                 properties = {'plugins': plugins};
@@ -26,20 +26,19 @@
                     }
                 }
 
-                console.log(properties);
                 element.jstree(properties);
 
                 scope.$watch('model', function (treeData) {
                     if (treeData == null) return;
 
                     element.jstree(true).settings.core.data = treeData;
-                    jsTreeService.refreshTree();
+                    jsTreeFactory.refreshTree();
 
                 }, true);
 
                 element.on('move_node.jstree', function (e, data) {
                     if (data.parent != data.old_parent) {
-                        jsTreeService.setMovedNodes(data);
+                        jsTreeFactory.setMovedNodes(data);
                     }
                 });
 
@@ -49,13 +48,13 @@
                             'id': e.target.parentNode.id,
                             'parent': e.target.parentNode.parentNode.parentNode.id
                         };
-                        jsTreeService.setSelectedNode(data);
+                        jsTreeFactory.setSelectedNode(data);
                     }
                 });
 
                 var to = false;
                 scope.$watch('search', function (value) {
-                    if (angular.isUndefined(value)) return;
+                    if (angular.isUndefined(value) || plugins.indexOf('search') == -1) return;
 
                     if (to) {
                         $timeout.cancel(to);
@@ -72,16 +71,18 @@
                     ));
                 }
 
-                jsTreeService._refreshTree(function () {
+                jsTreeFactory._refreshTree(function () {
                     element.jstree(true).refresh(false, true);
-                });
-
-                jsTreeService._undoMove(function () {
-                    //element.jstree(true).undo();
                 });
 
             }
 
+            var _mapTrim = function(arr) {
+                for (key in arr) {
+                    arr[key] = $.trim(arr[key]);
+                }
+                return arr;
+            };
 
             return {
                 restrict: 'EA',

@@ -15,7 +15,7 @@ gulp.task('js-min', function() {
         .pipe(sourcemaps.init())
         .pipe(concat('jstree-angular.min.js'))
         .pipe(uglify({preserveComments: 'some'}))
-        .pipe(sourcemaps.write('../dist'))
+        .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest('dist'));
 });
 
@@ -24,7 +24,7 @@ gulp.task('js-pack', function() {
         .pipe(sourcemaps.init())
         .pipe(concat('jstree-angular.pack.min.js'))
         .pipe(uglify({preserveComments: 'some'}))
-        .pipe(sourcemaps.write('../dist'))
+        .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest('dist'));
 });
 
