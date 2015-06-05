@@ -22,12 +22,20 @@ app.controller('MainController', ['$scope', 'jsTreeFactory', function ($scope, j
             $scope.movedNodes = jsTreeFactory.getMovedNodes();
         };
 
+        // Listener to show quantity of moved nodes
+        $scope.$on('jsTreeAngular:moved', function(e, data) {
+            $scope.$apply(function() {
+                $scope.moves = data.length;
+            });
+        });
+
+
         // Refresh tree and clean variables
         $scope.refresh = function() {
             $scope.movedNodes = undefined;
+            $scope.moves = undefined;
             jsTreeFactory.refreshTree();
         };
-
 
         // Some options to pass too.
         $scope.myOptions = {

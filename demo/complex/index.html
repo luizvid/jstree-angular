@@ -25,7 +25,7 @@
             <js-tree tree-model="jsonData" tree-search="search" tree-plugins="dnd, search, wholerow" tree-options="myOptions"></js-tree>
 
             <hr />
-            <button type="button" ng-click="show_moved()">Show moved nodes</button>
+            <button type="button" ng-click="show_moved()">Show {{moves || 0}} moves so far</button>
             <pre>{{movedNodes | json}}</pre>
         </div>
 

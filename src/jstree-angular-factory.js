@@ -23,7 +23,7 @@ var jsTree = angular.module('jsTreeAngular',[]);
                     _newMove(node, this);
                 }
 
-                $rootScope.$broadcast('jsTreeService:moved', this.moved_nodes);
+                $rootScope.$broadcast('jsTreeAngular:moved', this.moved_nodes);
             };
 
             this.getMovedNodes = function() {
@@ -40,7 +40,7 @@ var jsTree = angular.module('jsTreeAngular',[]);
 
             this.setSelectedNode = function(node) {
                 this.selected_node = node;
-                $rootScope.$broadcast('jsTreeService:selected', this.selected_node);
+                $rootScope.$broadcast('jsTreeAngular:selected', this.selected_node);
             };
 
             this.getSelectedNode = function(node) {
