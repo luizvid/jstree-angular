@@ -2,7 +2,7 @@
 var app = angular.module('ComplexDemo', [ 'jsTreeAngular' ]);
 
 // Sample controller for define data and some configuration
-app.controller('MainController', ['$scope', 'jsTreeFactory', function ($scope, jsTreeFactory) {
+app.controller('MainController', ['$scope', 'jsTreeAngular', function ($scope, jsTreeAngular) {
     'use strict';
 
     var init = function () {
@@ -19,7 +19,7 @@ app.controller('MainController', ['$scope', 'jsTreeFactory', function ($scope, j
 
         // Shows all moved nodes
         $scope.show_moved = function() {
-            $scope.movedNodes = jsTreeFactory.getMovedNodes();
+            $scope.movedNodes = jsTreeAngular.getMovedNodes();
         };
 
         // Listener to show quantity of moved nodes
@@ -27,14 +27,13 @@ app.controller('MainController', ['$scope', 'jsTreeFactory', function ($scope, j
             $scope.$apply(function() {
                 $scope.moves = data.length;
             });
-        });
-
+       });
 
         // Refresh tree and clean variables
         $scope.refresh = function() {
             $scope.movedNodes = undefined;
             $scope.moves = undefined;
-            jsTreeFactory.refreshTree();
+            jsTreeAngular.refreshTree();
         };
 
         // Some options to pass too.

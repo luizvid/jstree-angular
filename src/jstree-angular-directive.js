@@ -4,56 +4,73 @@
  License: MIT
  Version 1.1
  */
+if(angular.isUndefined(jsTreeAngular)) {
+    var jsTreeAngular = angular.module('jsTreeAngular',[]);
+}
 (function(app) {
     app.directive('jsTree', [
-        '$timeout', 'jsTreeFactory',
-        function ($timeout, jsTreeFactory) {
+        '$timeout', 'jsTreeAngular',
+        function ($timeout, jsTreeAngular) {
             'use strict';
 
-            var key, plugins = [], options = [], properties = {};
+            /**
+             * Initializes properties.
+             * @type {Array}
+             * @private
+             */
+            var _plugins = [], _options = [], _properties = {};
 
             function link(scope, element) {
-                plugins = scope.plugins ? _mapTrim(scope.plugins.split(',')) : [];
-                options = scope.options ? scope.options : [];
+                /**
+                 * Sets plugin list from scope`s tree-plugin.
+                 * @type {*}
+                 * @private
+                 */
+                _plugins = scope.plugins ? _mapTrim(scope.plugins.split(',')) : [];
+                /**
+                 * Sets option list from scope`s tree-options.
+                 * @private
+                 */
+                _options = scope.options ? scope.options : [];
+                /**
+                 * Sets properties
+                 * @type {{plugins: Array}}
+                 * @private
+                 */
+                _properties = {'plugins': _plugins};
 
-                properties = {'plugins': plugins};
-
+                /**
+                 * Set pair for plugins and options and validate them.
+                 */
                 if (scope.options !== undefined) {
-                    for (key in options) {
-                        if ('core' === key || plugins.indexOf(key))
-                            if (options.hasOwnProperty(key))
-                                properties[key] = options[key];
+                    for (var key in _options) {
+                        if ('core' === key || _plugins.indexOf(key))
+                            if (_options.hasOwnProperty(key))
+                                _properties[key] = _options[key];
                     }
                 }
 
-                element.jstree(properties);
+                element.jstree(_properties);
 
+                /**
+                 * Watch for scope`s tree-model callback.
+                 */
                 scope.$watch('model', function (treeData) {
                     if (treeData == null) return;
 
                     element.jstree(true).settings.core.data = treeData;
-                    jsTreeFactory.refreshTree();
 
+                    jsTreeAngular.refreshTree();
                 }, true);
 
-                element.on('move_node.jstree', function (e, data) {
-                    if (data.parent != data.old_parent) {
-                        jsTreeFactory.setMovedNodes(data);
-                    }
-                });
 
-                element.on('dblclick.jstree', function (e) {
-                    if (e.target.parentNode.id) {
-                        var data = {
-                            'id': e.target.parentNode.id,
-                            'parent': e.target.parentNode.parentNode.parentNode.id
-                        };
-                        jsTreeFactory.setSelectedNode(data);
-                    }
-                });
-
+                /**
+                 * Watch for tree-search scope`s callback.
+                 * @type {boolean}
+                 */
                 var to = false;
                 scope.$watch('search', function (value) {
+                    _checksActivePlugins('search');
                     if (angular.isUndefined(value) || plugins.indexOf('search') == -1) return;
 
                     if (to) {
@@ -64,26 +81,63 @@
                     }, 250);
                 });
 
-                function _isDraggable(node) {
-                    return (!(
-                    node[0].type == 'disabled' ||
-                    node[0].type == 'root'
-                    ));
-                }
+                /**
+                 * Sets jsTreeAngular`s moved nodes when tree`s event for move node is triggered.
+                 */
+                element.on('move_node.jstree', function (e, data) {
+                    if (data.parent != data.old_parent) {
+                        jsTreeAngular.setMovedNodes(data);
+                    }
+                });
 
-                jsTreeFactory._refreshTree(function () {
+                /**
+                 * Sets jsTreeAngular`s selected node when tree`s event for double click is triggered.
+                 */
+                element.on('dblclick.jstree', function (event, data) {
+                    if (event.target.parentNode.id) {
+                        var data = {
+                            'id': event.target.parentNode.id,
+                            'parent': event.target.parentNode.parentNode.parentNode.id
+                        };
+                        jsTreeAngular.setSelectedNode(data);
+                    }
+                });
+
+                /**
+                 * Sets the refresh`s tree method to JsTreeAngular`s callback
+                 */
+                jsTreeAngular._refreshTree(function () {
                     element.jstree(true).refresh(false, true);
                 });
 
+                /**
+                 * Checks if the plugin is active.
+                 * @param fnPlugin
+                 * @private
+                 */
+                var _checksActivePlugins = function(fnPlugin) {
+                    if (false) {
+                        console.error('The ' + fnPlugin + ' is needed for this functionality.');
+                    }
+                };
             }
 
+            /**
+             * Array`s trim
+             * @param arr
+             * @returns {*}
+             * @private
+             */
             var _mapTrim = function(arr) {
-                for (key in arr) {
+                for (var key in arr) {
                     arr[key] = $.trim(arr[key]);
                 }
                 return arr;
             };
 
+            /**
+             * Directive scope`s callback
+             */
             return {
                 restrict: 'EA',
                 scope: {
@@ -96,4 +150,4 @@
             };
         }
     ]);
-})(jsTree);
+})(jsTreeAngular);
