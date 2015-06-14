@@ -2,7 +2,7 @@
  jsTree-Angular
  (c) 2015 Luiz Fernando Vid <luizvid@gmail.com>
  License: MIT
- Version 1.2
+ Version 1.1.1
  */
 if(angular.isUndefined(jsTreeAngular)) {
     var jsTreeAngular = angular.module('jsTreeAngular',[]);
@@ -26,7 +26,7 @@ if(angular.isUndefined(jsTreeAngular)) {
                  */
                 if (angular.isUndefined(element.jstree)) {
                     element.append('<p style="color: red; font-size: 12px; background-color: rgba(255, 64, 39, 0.09)">Something went wrong, <strong>jsTree looks like was not loaded. Obtain more information by clicking <a href="//github.com/luizvid/jstree-angular/blob/master/README.md#quick-start" style="color: red; font-decoration: underline;" target="_blank">here</a>.</strong></p>');
-                    return;
+                    throw new Error('Something went wrong, jsTree looks like was not loaded.');
                 }
 
                 _id = scope.id ? _mapTrim(scope.id) : 'default-tree';
@@ -87,8 +87,8 @@ if(angular.isUndefined(jsTreeAngular)) {
                  */
                 var to = false;
                 scope.$watch('search', function (value) {
-                    _checksActivePlugins('search');
-                    if (angular.isUndefined(value) || plugins.indexOf('search') == -1) return;
+                    if (_checksActivePlugins('search', 'search')) return;
+                    if (angular.isUndefined(value) || _plugins.indexOf('search') == -1) return;
 
                     if (to) {
                         $timeout.cancel(to);
@@ -102,6 +102,7 @@ if(angular.isUndefined(jsTreeAngular)) {
                  * Sets jsTreeAngular`s moved nodes when tree`s event for move node is triggered.
                  */
                 element.on('move_node.jstree', function (e, data) {
+                    if (_checksActivePlugins('dnd', 'move_node')) return;
                     if (data.parent != data.old_parent) {
                         jsTreeAngular.setMovedNodes(data);
                     }
@@ -132,12 +133,17 @@ if(angular.isUndefined(jsTreeAngular)) {
                  * @param fnPlugin
                  * @private
                  */
-                var _checksActivePlugins = function(fnPlugin) {
-                    console.log(element.jstree(true).settings.plugins);
-                    if (false) {
-                        console.error('The ' + fnPlugin + ' is needed for this functionality.');
+                var _checksActivePlugins = function(fnPlugin, fnCalled) {
+                    if (element.jstree(true).settings.plugins.indexOf(fnPlugin) === -1) {
+                        console.error(fnPlugin + ' plugin is needed for ' + fnCalled + ' to work. Add \'' + fnPlugin + '\' with tree-plugins.');
+                        return true;
                     }
                 };
+
+                /**
+                 * Sets active plugins
+                 */
+                jsTreeAngular._setActivePlugins(element.jstree(true).settings.plugins);
             }
 
             /**

@@ -2,7 +2,7 @@
  jsTree-Angular
  (c) 2015 Luiz Fernando Vid <luizvid@gmail.com>
  License: MIT
- Version 1.2
+ Version 1.1.1
  */
 if(angular.isUndefined(jsTreeAngular)) {
     var jsTreeAngular = angular.module('jsTreeAngular',[]);
@@ -17,21 +17,24 @@ if(angular.isUndefined(jsTreeAngular)) {
              * dnd`s (drag and drop) plugin function, plugin needed
              * Holds the list of moved arrays
              * @type {Array}
+             * @private
              */
-            this.moved_nodes = [];
+            var _moved_nodes = [];
 
             /**
              * no plugin needed
              * Holds the selected node
              * @type {undefined}
+             * @private
              */
-            this.selected_node = undefined;
+            var _selected_node = undefined;
 
             /**
              * Holds the active plugins
              * @type {undefined}
+             * @private
              */
-            this.available_plugins = undefined;
+            var _available_plugins = undefined;
 
             /**
              * Holds the refresh`s tree method
@@ -45,14 +48,13 @@ if(angular.isUndefined(jsTreeAngular)) {
              * @param node
              */
             this.setMovedNodes = function(node) {
-                _checksActivePlugins('setMovedNodes', 'dnd');
                 if (_alreadyMoved(node.node.id, this) !== false) {
-                    _updateMove(node, this);
+                    _updateMove(node);
                 } else {
-                    _newMove(node, this);
+                    _newMove(node);
                 }
 
-                $rootScope.$broadcast('jsTreeAngular:moved', this.moved_nodes);
+                $rootScope.$broadcast('jsTreeAngular:moved', _moved_nodes);
             };
 
             /**
@@ -61,23 +63,26 @@ if(angular.isUndefined(jsTreeAngular)) {
              * @returns {Array}
              */
             this.getMovedNodes = function() {
-                return this.moved_nodes;
+                if (_checksActivePlugins('dnd', 'getMovedNodes')) return;
+                return _moved_nodes;
             };
 
             /**
              * Clears the moved nodes holder.
              */
             this.cleanMovedNodes = function() {
-                this.moved_nodes = [];
+                if (_checksActivePlugins('dnd', 'cleanMovedNodes')) return;
+                _moved_nodes = [];
             };
 
             this.undoLastMove = function() {
-                this.moved_nodes.unshift();
+                if (_checksActivePlugins('dnd', 'undoLastMove')) return;
+                _moved_nodes.unshift();
             };
 
             this.setSelectedNode = function(node) {
-                this.selected_node = node;
-                $rootScope.$broadcast('jsTreeAngular:selected', this.selected_node);
+                _selected_node = node;
+                $rootScope.$broadcast('jsTreeAngular:selected', _selected_node);
             };
 
             /**
@@ -86,14 +91,23 @@ if(angular.isUndefined(jsTreeAngular)) {
              * @returns {*}
              */
             this.getSelectedNode = function(node) {
-                return this.selected_node = node;
+                return _selected_node = node;
             };
 
             /**
              * Clears the selected node holder.
              */
             this.clearSelectedNode = function() {
-                this.selected_node = undefined;
+                _selected_node = undefined;
+            };
+
+            /**
+             * Sets the active plugins.
+             * @param plugins
+             * @private
+             */
+            this._setActivePlugins = function(plugins) {
+                _available_plugins = plugins;
             };
 
             /**
@@ -120,22 +134,22 @@ if(angular.isUndefined(jsTreeAngular)) {
              * @param _this
              * @private
              */
-            var _updateMove = function(node, _this) {
-                var index = _alreadyMoved(node.node.id, _this);
+            var _updateMove = function(node) {
+                var index = _alreadyMoved(node.node.id);
 
-                if (node.parent == _this.moved_nodes[index].old_parent) {
-                    _this.moved_nodes.splice(index, 1);
+                if (node.parent == _moved_nodes[index].old_parent) {
+                    _moved_nodes.splice(index, 1);
                     return;
                 }
 
                 var data = {
                     'id': node.node.id,
                     'parent': node.parent,
-                    'old_parent': _this.moved_nodes[index].old_parent,
+                    'old_parent': _moved_nodes[index].old_parent,
                     'position': node.position
                 };
 
-                _this.moved_nodes[index] = data;
+                _moved_nodes[index] = data;
             };
 
             /**
@@ -143,9 +157,9 @@ if(angular.isUndefined(jsTreeAngular)) {
              * @param fnCalled
              * @private
              */
-            var _checksActivePlugins = function(fnCalled, fnPlugin) {
-                if (false) {
-                    console.error('The method ' + fnCalled + ' is not set because the ' + fnPlugin + '`s plugin is not active.');
+            var _checksActivePlugins = function(fnPlugin, fnCalled) {
+                if (_available_plugins.indexOf(fnPlugin) === -1) {
+                    console.error(fnPlugin + ' plugin is needed for ' + fnCalled + ' to work. Add \'' + fnPlugin + '\' with tree-plugins.');
                     return false;
                 }
             };
@@ -156,7 +170,7 @@ if(angular.isUndefined(jsTreeAngular)) {
              * @param _this
              * @private
              */
-            var _newMove = function(node, _this) {
+            var _newMove = function(node) {
                 var data = {
                     'id': node.node.id,
                     'parent': node.parent,
@@ -164,7 +178,7 @@ if(angular.isUndefined(jsTreeAngular)) {
                     'position': node.position
                 };
 
-                _this.moved_nodes.push(data);
+                _moved_nodes.push(data);
             };
 
             /**
@@ -173,10 +187,10 @@ if(angular.isUndefined(jsTreeAngular)) {
              * @param _this
              * @private
              */
-            var _alreadyMoved = function(needle, _this) {
-                var length = _this.moved_nodes.length;
+            var _alreadyMoved = function(needle) {
+                var length = _moved_nodes.length;
                 for(var i = 0; i < length; i++) {
-                    if(_this.moved_nodes[i].id == needle) return i;
+                    if(_moved_nodes[i].id == needle) return i;
                 }
                 return false;
             };
