@@ -2,7 +2,7 @@
  jsTree-Angular
  (c) 2015 Luiz Fernando Vid <luizvid@gmail.com>
  License: MIT
- Version 1.1
+ Version 1.2
  */
 if(angular.isUndefined(jsTreeAngular)) {
     var jsTreeAngular = angular.module('jsTreeAngular',[]);
@@ -21,6 +21,14 @@ if(angular.isUndefined(jsTreeAngular)) {
             var _plugins = [], _options = [], _properties = {};
 
             function link(scope, element) {
+                /**
+                 * Verifies if jsTree is loaded.
+                 */
+                if (angular.isUndefined(element.jstree)) {
+                    element.append('<p style="color: red; font-size: 12px; background-color: rgba(255, 64, 39, 0.09)">Something went wrong, jsTree looks like it was not loaded.</p>');
+                    return;
+                }
+
                 /**
                  * Sets plugin list from scope`s tree-plugin.
                  * @type {*}
@@ -50,6 +58,9 @@ if(angular.isUndefined(jsTreeAngular)) {
                     }
                 }
 
+                /**
+                 * Initializes tree with plugins and options.
+                 */
                 element.jstree(_properties);
 
                 /**
@@ -57,12 +68,9 @@ if(angular.isUndefined(jsTreeAngular)) {
                  */
                 scope.$watch('model', function (treeData) {
                     if (treeData == null) return;
-
                     element.jstree(true).settings.core.data = treeData;
-
                     jsTreeAngular.refreshTree();
                 }, true);
-
 
                 /**
                  * Watch for tree-search scope`s callback.
@@ -116,6 +124,7 @@ if(angular.isUndefined(jsTreeAngular)) {
                  * @private
                  */
                 var _checksActivePlugins = function(fnPlugin) {
+                    console.log(element.jstree(true).plugins);
                     if (false) {
                         console.error('The ' + fnPlugin + ' is needed for this functionality.');
                     }

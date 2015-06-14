@@ -2,7 +2,7 @@
  jsTree-Angular
  (c) 2015 Luiz Fernando Vid <luizvid@gmail.com>
  License: MIT
- Version 1.1
+ Version 1.2
  */
 if(angular.isUndefined(jsTreeAngular)) {
     var jsTreeAngular = angular.module('jsTreeAngular',[]);
