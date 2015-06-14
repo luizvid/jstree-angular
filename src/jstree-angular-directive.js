@@ -18,17 +18,18 @@ if(angular.isUndefined(jsTreeAngular)) {
              * @type {Array}
              * @private
              */
-            var _plugins = [], _options = [], _properties = {};
+            var _plugins = [], _options = [], _properties = {}, _id;
 
             function link(scope, element) {
                 /**
                  * Verifies if jsTree is loaded.
                  */
                 if (angular.isUndefined(element.jstree)) {
-                    element.append('<p style="color: red; font-size: 12px; background-color: rgba(255, 64, 39, 0.09)">Something went wrong, jsTree looks like it was not loaded.</p>');
+                    element.append('<p style="color: red; font-size: 12px; background-color: rgba(255, 64, 39, 0.09)">Something went wrong, <strong>jsTree looks like was not loaded. Obtain more information by clicking <a href="//github.com/luizvid/jstree-angular/blob/master/README.md#quick-start" style="color: red; font-decoration: underline;" target="_blank">here</a>.</strong></p>');
                     return;
                 }
 
+                _id = scope.id ? _mapTrim(scope.id) : 'default-tree';
                 /**
                  * Sets plugin list from scope`s tree-plugin.
                  * @type {*}
@@ -61,8 +62,15 @@ if(angular.isUndefined(jsTreeAngular)) {
                 /**
                  * Initializes tree with plugins and options.
                  */
-                element.jstree(_properties);
+                element.jstree(_properties, 'test');
 
+                /**
+                 * Verifies if jsTree is updated with version 3.1.0 or later.
+                 */
+                if (angular.isUndefined(element.jstree(true).settings.massload)) {
+                    element.append('<p style="color: red; font-size: 12px; background-color: rgba(255, 64, 39, 0.09)">Something went wrong, <strong>jsTree seems outdated. Update your version to 3.1.0 or later by clicking <a href="//github.com/vakata/jstree/releases" style="color: red; font-decoration: underline;" target="_blank">here</a>.</strong></p>');
+                    return;
+                }
                 /**
                  * Watch for scope`s tree-model callback.
                  */
@@ -70,6 +78,7 @@ if(angular.isUndefined(jsTreeAngular)) {
                     if (treeData == null) return;
                     element.jstree(true).settings.core.data = treeData;
                     jsTreeAngular.refreshTree();
+
                 }, true);
 
                 /**
@@ -124,7 +133,7 @@ if(angular.isUndefined(jsTreeAngular)) {
                  * @private
                  */
                 var _checksActivePlugins = function(fnPlugin) {
-                    console.log(element.jstree(true).plugins);
+                    console.log(element.jstree(true).settings.plugins);
                     if (false) {
                         console.error('The ' + fnPlugin + ' is needed for this functionality.');
                     }
@@ -137,11 +146,15 @@ if(angular.isUndefined(jsTreeAngular)) {
              * @returns {*}
              * @private
              */
-            var _mapTrim = function(arr) {
-                for (var key in arr) {
-                    arr[key] = $.trim(arr[key]);
+            var _mapTrim = function(value) {
+                if (typeof value === 'string') {
+                    value = $.trim(value);
+                } else {
+                    for (var key in value) {
+                        value[key] = $.trim(value[key]);
+                    }
                 }
-                return arr;
+                return value;
             };
 
             /**
@@ -150,6 +163,7 @@ if(angular.isUndefined(jsTreeAngular)) {
             return {
                 restrict: 'EA',
                 scope: {
+                    id: '@treeId',
                     model: '=treeModel',
                     search: '=treeSearch',
                     plugins: '@treePlugins',
